@@ -88,4 +88,4 @@ class dow_markdown(Plugin):
             logger.info(f"[dow_markdown] it seems markdown image in the content but not matched, content={content}.")
 
     def get_help_text(self, **kwargs):
-        return "优化Coze返回结果中的图片和网址链接。"
+        return "优化返回结果中的图片和网址链接。"
