@@ -11,14 +11,13 @@ from plugins import *
 
 
 @plugins.register(
-    name="dow_markdown",
+    name="dowmd",
     desire_priority=66,
-    hidden=False,
     desc="优化markdown返回结果中的图片和网址链接。",
     version="0.1",
     author="Kubbo",
 )
-class dow_markdown(Plugin):
+class dowmd(Plugin):
     def __init__(self):
         super().__init__()
         try:
