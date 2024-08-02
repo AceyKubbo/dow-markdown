@@ -10,12 +10,12 @@ from plugins import *
 
 
 @plugins.register(
-    name="NiceCoze",
+    name="dow-markdown",
     desire_priority=66,
     hidden=False,
-    desc="优化Coze返回结果中的图片和网址链接。",
-    version="1.5",
-    author="空心菜",
+    desc="优化markdown返回结果中的图片和网址链接。",
+    version="0.1",
+    author="Kubbo",
 )
 class NiceCoze(Plugin):
     def __init__(self):
