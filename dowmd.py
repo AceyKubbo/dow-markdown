@@ -30,6 +30,7 @@ class dow_markdown(Plugin):
         if e_context["reply"].type != ReplyType.TEXT:
             return
         try:
+            logger.info(f"获取到回复消息{e_context}")
             channel = e_context["channel"]
             context = e_context["context"]
             content = e_context["reply"].content.strip()
