@@ -29,7 +29,7 @@ class dow_markdown(Plugin):
             raise e
     def on_handle_context(self,e_content:EventContext):
         try:
-            send_msg = e_context["context"]
+            send_msg = e_content["context"]
             if send_msg["type"] == ReplyType.TEXT:
                 if any(word in send_msg["content"] for word in ["画"]):
                     receiver = send_msg.get("receiver")
