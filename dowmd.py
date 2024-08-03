@@ -31,13 +31,14 @@ class dow_markdown(Plugin):
     def on_handle_context(self,e_context:EventContext):
         try:
             send_msg = e_context["context"]
-            logger.info(f"[dow_markdown] on_handle_context sendMsg={send_msg["content"]}")
+            text = send_msg["content"]
+            logger.info(f"[dow_markdown] on_handle_context sendMsg={text}")
             if send_msg["type"] == ReplyType.TEXT:
                 if any(word in send_msg["content"] for word in ["画"]):
                     receiver = send_msg.get("receiver")
                     itchat.send("我正在绘画中,可能需要多等待一会,请稍后...",toUserName=receiver)
         except Exception as e:
-            logger.warn(f"[dow_markdown] on_handle_context failed, content={send_msg["content"]}, error={e}")
+            logger.warn(f"[dow_markdown] on_handle_context failed, content={text}, error={e}")
         finally:
             e_context.action = EventAction.CONTINUE
     def on_decorate_reply(self, e_context: EventContext):
