@@ -21,7 +21,7 @@ class dow_markdown(Plugin):
     def __init__(self):
         super().__init__()
         try:
-            self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_decorate_reply
+            self.handlers[Event.ON_DECORATE_REPLY] = self.on_decorate_reply
             logger.info("[dow_markdown] inited.")
         except Exception as e:
             logger.warn("[dow_markdown] init failed, ignore.")
