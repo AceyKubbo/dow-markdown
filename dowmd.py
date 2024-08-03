@@ -50,18 +50,13 @@ class dow_markdown(Plugin):
             has_md = re.search(r'\!\[[^\]]+\]\(?',content)
             if has_md:
                 host = os.environ.get('DIFY_API_BASE', 'http://121.37.155.68:35801')
+                if host.endswith('/v1'):
+                    host = host[:-3]
                 image_path = re.search(r'!\[.*\]\((.*?)\)',content).group(1)
                 logger.info(f"提取到的数据==>host:{host},url:{image_path}")
                 reply = Reply(ReplyType.IMAGE_URL, f"{host}{image_path}")
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
-            # 去掉每行结尾的Markdown链接中网址部分的小括号，避免微信误以为“)”是网址的一部分导致微信中无法打开该页面
-            content_list = content.split('\n')
-            new_content_list = [re.sub(r'\((https?://[^\s]+)\)$', r' \1', line) for line in content_list]
-            if new_content_list != content_list:
-                logger.info(f"[dow_markdown] parenthesis in the url has been removed, content={content}")
-                reply = Reply(ReplyType.TEXT, '\n'.join(new_content_list).strip())
-                e_context["reply"] = reply
         except Exception as e:
             logger.warn(f"[dow_markdown] on_decorate_reply failed, content={content}, error={e}")
         finally:
