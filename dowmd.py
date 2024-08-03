@@ -32,11 +32,11 @@ class dow_markdown(Plugin):
         try:
             send_msg = e_context["context"]
             text = send_msg["content"]
-            logger.info(f"[dow_markdown] on_handle_context sendMsg={text}")
             if send_msg["type"] == ReplyType.TEXT:
                 if any(word in send_msg["content"] for word in ["画"]):
                     receiver = send_msg.get("receiver")
                     itchat.send("我正在绘画中,可能需要多等待一会,请稍后...",toUserName=receiver)
+                    logger.info("[WX] sendMsg={}, receiver={}".format(text, receiver))
         except Exception as e:
             logger.warn(f"[dow_markdown] on_handle_context failed, content={text}, error={e}")
         finally:
