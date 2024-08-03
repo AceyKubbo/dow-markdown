@@ -30,6 +30,7 @@ class dow_markdown(Plugin):
     def on_handle_context(self,e_context:EventContext):
         try:
             send_msg = e_context["context"]
+            logger.info(f"[dow_markdown] on_handle_context sendMsg={send_msg["content"]}")
             if send_msg["type"] == ReplyType.TEXT:
                 if any(word in send_msg["content"] for word in ["画"]):
                     receiver = send_msg.get("receiver")
