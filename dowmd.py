@@ -34,7 +34,8 @@ class dow_markdown(Plugin):
                 if any(word in send_msg["content"] for word in ["画"]):
                     receiver = send_msg.get("receiver")
                     itchat.send("我正在绘画中,可能需要多等待一会,请稍后...",toUserName=receiver)
-                    e_context.action = EventAction.CONTINUE
+        except Exception as e:
+            logger.warn(f"[dow_markdown] on_handle_context failed, content={send_msg["content"]}, error={e}")
         finally:
             e_context.action = EventAction.CONTINUE
     def on_decorate_reply(self, e_context: EventContext):
@@ -53,6 +54,9 @@ class dow_markdown(Plugin):
                 if host.endswith('/v1'):
                     host = host[:-3]
                 image_path = re.search(r'!\[.*\]\((.*?)\)',content).group(1)
+                # 排除网络图片,不做特殊处理
+                if image_path.startswith("http"):
+                    host = ""
                 logger.info(f"提取到的数据==>host:{host},url:{image_path}")
                 reply = Reply(ReplyType.IMAGE_URL, f"{host}{image_path}")
                 e_context["reply"] = reply
