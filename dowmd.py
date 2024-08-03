@@ -16,6 +16,7 @@ from lib import itchat
     desc="优化markdown返回结果中的图片和网址链接。",
     version="0.2",
     author="Kubbo",
+    hidden=False
 )
 class dow_markdown(Plugin):
     def __init__(self):
