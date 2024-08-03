@@ -27,16 +27,16 @@ class dow_markdown(Plugin):
         except Exception as e:
             logger.warn("[dow_markdown] init failed, ignore.")
             raise e
-    def on_handle_context(self,e_content:EventContext):
+    def on_handle_context(self,e_context:EventContext):
         try:
-            send_msg = e_content["context"]
+            send_msg = e_context["context"]
             if send_msg["type"] == ReplyType.TEXT:
                 if any(word in send_msg["content"] for word in ["画"]):
                     receiver = send_msg.get("receiver")
                     itchat.send("我正在绘画中,可能需要多等待一会,请稍后...",toUserName=receiver)
-                    e_content.action = EventAction.CONTINUE
+                    e_context.action = EventAction.CONTINUE
         finally:
-            e_content.action = EventAction.CONTINUE
+            e_context.action = EventAction.CONTINUE
     def on_decorate_reply(self, e_context: EventContext):
         if e_context["reply"].type != ReplyType.TEXT:
             return
