@@ -12,7 +12,7 @@ from plugins import *
     name="dow_markdown",
     desire_priority=66,
     desc="优化markdown返回结果中的图片和网址链接。",
-    version="0.3",
+    version="0.4",
     author="Kubbo",
     hidden=False
 )
@@ -31,7 +31,7 @@ class dow_markdown(Plugin):
         send_msg = e_context["context"]
         try:
             text = send_msg["content"]
-            if any(word in send_msg["content"] for word in ["画", "/sd"]):
+            if any(word in send_msg["content"] for word in ["画", ".sd"]):
                 receiver = send_msg.get("receiver")
                 itchat.send("我正在绘画中,可能需要多等待一会,请稍后...", toUserName=receiver)
                 logger.info("[WX] sendMsg={}, receiver={}".format(text, receiver))
@@ -77,6 +77,11 @@ class dow_markdown(Plugin):
                 reply = Reply(content=part.strip(), type=ReplyType.TEXT)
                 if re.search(r"\.(gif|jpg|png|jpeg|webp)", part):
                     reply.type = ReplyType.IMAGE_URL
+                    reply.content = part[:-1].strip()
+                    if not part.startswith('http'):
+                        reply.content = host + reply.content
+                elif re.search(r"\.(mp4)", part):
+                    reply.type = ReplyType.VIDEO_URL
                     reply.content = part[:-1].strip()
                     if not part.startswith('http'):
                         reply.content = host + reply.content
