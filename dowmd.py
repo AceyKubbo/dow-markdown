@@ -6,13 +6,14 @@ import plugins
 from bridge.reply import Reply, ReplyType
 from lib import itchat
 from plugins import *
+from config import conf
 
 
 @plugins.register(
     name="dow_markdown",
     desire_priority=66,
     desc="优化markdown返回结果中的图片和网址链接。",
-    version="0.4",
+    version="0.5",
     author="Kubbo",
     hidden=False
 )
@@ -64,10 +65,12 @@ class dow_markdown(Plugin):
         return "优化返回结果中的图片和网址链接。"
 
     def handle_send(self, content, e_context, is_last):
-        host = os.environ.get('DIFY_API_BASE', 'http://121.37.155.68:35801')
+        host = os.environ.get('DIFY_API_BASE', '')
         if host.endswith('/v1'):
             host = host[:-3]
-        parts = re.split(r'\!\[[^\]]+\]\(', content)
+        if 'coze' == conf().get('model'):
+            host = "https://s.coze.cn/t/"
+        parts = re.split(r'\!\[[^\]]+\]\(?', content)
         parts = [p for p in parts if p.strip()]
         channel = e_context["channel"]
         context = e_context["context"]
@@ -77,16 +80,22 @@ class dow_markdown(Plugin):
                 reply = Reply(content=part.strip(), type=ReplyType.TEXT)
                 if re.search(r"\.(gif|jpg|png|jpeg|webp)", part):
                     reply.type = ReplyType.IMAGE_URL
-                    reply.content = part[:-1].strip()
-                    if not part.startswith('http'):
-                        reply.content = host + reply.content
+                    reply.content = self.extract_url(part.strip(), host)
                 elif re.search(r"\.(mp4)", part):
                     reply.type = ReplyType.VIDEO_URL
-                    reply.content = part[:-1].strip()
-                    if not part.startswith('http'):
-                        reply.content = host + reply.content
+                    reply.content = self.extract_url(part.strip(), host)
                 if index == len(parts) - 1 and is_last:
                     e_context["reply"] = reply
                     e_context.action = EventAction.BREAK_PASS
                 else:
                     channel.send(reply, context)
+
+    def extract_url(self, text, host):
+        text = text.strip()
+        if text.endswith(")"):
+            text = text[:-1]
+        if not text.startswith('http'):
+            if text.startswith('/t/') and 'coze' == conf().get('model'):
+                text = text[3:]
+            text = host + text
+        return text
