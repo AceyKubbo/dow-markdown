@@ -13,7 +13,7 @@ from config import conf
     name="dow_markdown",
     desire_priority=66,
     desc="优化markdown返回结果中的图片和网址链接。",
-    version="0.5",
+    version="0.6",
     author="Kubbo",
     hidden=False
 )
@@ -70,7 +70,8 @@ class dow_markdown(Plugin):
             host = host[:-3]
         if 'coze' == conf().get('model'):
             host = "https://s.coze.cn/t/"
-        parts = re.split(r'\!\[[^\]]+\]\(?', content)
+        format_content = self.format_content(content)
+        parts = re.split(r'&分块&', format_content)
         parts = [p for p in parts if p.strip()]
         channel = e_context["channel"]
         context = e_context["context"]
@@ -84,11 +85,16 @@ class dow_markdown(Plugin):
                 elif re.search(r"\.(mp4)", part):
                     reply.type = ReplyType.VIDEO_URL
                     reply.content = self.extract_url(part.strip(), host)
-                if index == len(parts) - 1 and is_last:
-                    e_context["reply"] = reply
-                    e_context.action = EventAction.BREAK_PASS
-                else:
-                    channel.send(reply, context)
+                try:
+                    if index == len(parts) - 1 and is_last:
+                        e_context["reply"] = reply
+                        e_context.action = EventAction.BREAK_PASS
+                    else:
+                        channel.send(reply, context)
+                except Exception as e:
+                    source_type = {ReplyType.IMAGE_URL: "图片", ReplyType.VIDEO_URL: "视频"}[reply.type]
+                    itchat.send(f"[{source_type}]加载失败", toUserName=context.get("receiver"))
+                    logger.warn("[dow_markdown] handle_send failed, error={}".format(e))
 
     def extract_url(self, text, host):
         text = text.strip()
@@ -98,4 +104,10 @@ class dow_markdown(Plugin):
             if text.startswith('/t/') and 'coze' == conf().get('model'):
                 text = text[3:]
             text = host + text
+        logger.info("[extract_url] text={}".format(text))
         return text
+
+    def format_content(self, content):
+        content = re.sub(r"\!\[([^\]]+)\]\(([^)\\\s]+)\)", r"&分块&\2&分块&", content)
+        content = re.sub(r"\\n", "\n", content)
+        return content
