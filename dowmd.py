@@ -32,7 +32,7 @@ class dow_markdown(Plugin):
         send_msg = e_context["context"]
         try:
             text = send_msg["content"]
-            if any(word in send_msg["content"] for word in ["画", ".sd"]):
+            if any(word in send_msg["content"] for word in [".画", ".sd"]):
                 receiver = send_msg.get("receiver")
                 itchat.send("我正在绘画中,可能需要多等待一会,请稍后...", toUserName=receiver)
                 logger.info("[WX] sendMsg={}, receiver={}".format(text, receiver))
