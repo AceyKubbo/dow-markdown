@@ -108,6 +108,6 @@ class dow_markdown(Plugin):
         return text
 
     def format_content(self, content):
-        content = re.sub(r"\!\[([^\]]*)\]\(([^)\\\s]+)\)", r"&分块&\2&分块&", content)
+        content = re.sub(r"\!\[([^\]]*)\]\(?([^)\\\s]+)\)?", r"&分块&\2&分块&", content)
         content = re.sub(r"\\n", "\n", content)
         return content
