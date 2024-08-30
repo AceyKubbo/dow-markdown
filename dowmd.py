@@ -21,6 +21,7 @@ class dow_markdown(Plugin):
     def __init__(self):
         super().__init__()
         try:
+            self.config =super().loading_config()
             self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
             self.handlers[Event.ON_DECORATE_REPLY] = self.on_decorate_reply
             logger.info("[dow_markdown] inited.")
@@ -108,6 +109,8 @@ class dow_markdown(Plugin):
         return text
 
     def format_content(self, content):
-        content = re.sub(r"\!\[([^\]]*)\]\(?([^)\\\s]+)\)?", r"&分块&\2&分块&", content)
+        regex_pattern = self.config.get("regex_pattern",r"\!\[([^\]]*)\]\(?([^)\\\s]+)\)?")
+        replacement_pattern = self.config.get("replacement_pattern",r"&分块&\2&分块&")
+        content = re.sub(regex_pattern, replacement_pattern, content)
         content = re.sub(r"\\n", "\n", content)
         return content
