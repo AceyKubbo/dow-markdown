@@ -13,7 +13,7 @@ from config import conf
     name="dow_markdown",
     desire_priority=66,
     desc="优化markdown返回结果中的图片和网址链接。",
-    version="0.6",
+    version="0.7",
     author="Kubbo",
     hidden=False
 )
@@ -21,7 +21,7 @@ class dow_markdown(Plugin):
     def __init__(self):
         super().__init__()
         try:
-            self.config =super().loading_config()
+            self.config =super().load_config()
             self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
             self.handlers[Event.ON_DECORATE_REPLY] = self.on_decorate_reply
             logger.info("[dow_markdown] inited.")
